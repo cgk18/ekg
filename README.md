@@ -61,8 +61,8 @@ This hybrid strategy lets us compare end‑to‑end image models with fully digi
 
 | Model | Input | Val Acc | Test Acc | Micro‑F1 |
 |-------|-------|--------:|---------:|---------:|
-| Basic CNN | Raw signal image | **64 %** | 61 % | – |
-| CNN + Dropout/Reg | Raw signal image | **64 %** | 66 % | – |
+| Basic CNN | Raw signal | **68 %** | 61 % | – |
+| CNN + Dropout/Reg | Raw signal | **64 %** | 66 % | – |
 | **1‑D ResNet** | Digitized signal | **68 %** | 66 % | **0.74** |
 | ResNet‑50 TL | Cleaned image | **66 %** | 66 % | – |
 | Random Forest | Engineered signal feats | – | – | **0.39** |
