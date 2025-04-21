@@ -48,8 +48,8 @@ This hybrid strategy lets us compare end‑to‑end image models with fully digi
 
 * **Dataset.** PTB‑XL v1.0.3 (21,837 12‑lead records, 10 s each). Signals were rendered to PNGs, then processed through the pipeline above. Only diagnostic classes with ≥ 100 instances were retained to mitigate extreme imbalance (N = ~3.8 k images).�cite�turn0file1�ℹ  
 * **Environment.**  
-  * **Image models:** NVIDIA T4 (Colab) – ~20‑50 min / epoch.  
-  * **Signal models:** Apple M1 Pro CPU & 16‑GB RAM (local).  
+  * **Image models:** Apple M1 CPU & 8‑GB RAM (local) – ~20‑50 min / epoch.  
+  * **Signal models:** Apple M1 CPU & 8‑GB RAM (local).  
 * **Hyper‑parameters.**  
   * CNN (images): Adam 1e‑4, batch 32, dropout 0.5, early‑stopping on val‑loss.  
   * 1‑D ResNet: 34 layers, global‑avg‑pool, cosine‑scheduler 30 epochs.  
