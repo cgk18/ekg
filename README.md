@@ -1,6 +1,95 @@
 # Automating the Digitization & Diagnosis of Paper EKGs  
 *A PTB‑XL case study*
 
+
+# How to Use the Code
+
+This section guides you through the end-to-end process of running our ECG digitization and diagnosis pipeline. The workflow involves generating EKG images, cleaning them, extracting signals, and running machine learning models for diagnosis.
+
+## Prerequisites
+
+- Python 3.8+
+- Required packages (install via `pip install -r requirements.txt`)
+- PTB-XL dataset (see [dat/README.md](./dat/README.md) for dataset acquisition instructions)
+
+## Step 1: Generate EKG Images
+
+We use the [ECG Image Generator](https://github.com/alphanumericslab/ecg-image-kit) to convert raw ECG signals into images that simulate printed/PDF ECGs:
+
+```bash
+# Clone the ECG Image Generator repository
+git clone https://github.com/alphanumericslab/ecg-image-kit.git
+cd ecg-image-kit/codes/ecg-image-generator
+
+# Generate images from the PTB-XL dataset
+python generate_images.py --input_dir /path/to/ptb-xl --output_dir /path/to/output/images
+```
+
+## Step 2: Image Cleaning and Signal Reconstruction
+
+The `signal_processing.ipynb` notebook guides you through:
+- Binarizing the ECG images using Sauvola adaptive thresholding
+- Deskewing images via Probabilistic Hough Transform
+- Removing grid lines through progressive masking
+- Reconstructing the 12-lead signals using cubic spline interpolation
+
+```bash
+# Open the notebook
+jupyter notebook signal_processing.ipynb
+```
+
+Follow the notebook instructions to process the images and extract clean signals. The notebook will save:
+- Cleaned images (without grid lines)
+- Reconstructed signal data in CSV format
+
+## Step 3: Machine Learning Models
+
+### Option A: Signal-based Models (1D ResNet and Random Forest)
+
+Use the reconstructed signal data to train and evaluate 1D models:
+
+```bash
+# Run the signal ML notebook
+jupyter notebook signal_ml.ipynb
+```
+
+This notebook implements:
+- Feature engineering for Random Forest models
+- 1D ResNet architecture for raw signal classification
+- Model training, validation, and testing
+- Performance evaluation metrics
+
+### Option B: Image-based Models (CNN)
+
+Use the cleaned ECG images to train and evaluate CNN models:
+
+```bash
+# Run the CNN notebook
+jupyter notebook cnn.ipynb
+```
+
+This notebook implements:
+- Basic CNN architecture
+- Transfer learning with ResNet-50
+- Data augmentation techniques
+- Model training, validation, and testing
+- Performance visualization
+
+## Results Interpretation
+
+After running the models, refer to the "Results" and "Discussion" sections of the README for interpretation of the performance metrics and comparison between different approaches.
+
+## Computational Requirements
+
+- Image processing: 2 hours per 1,000 images for full augmentation
+- Signal models: Trainable on CPU (Apple M1 or similar)
+- Image CNN models: 20-50 minutes per epoch on Apple M1
+
+## Troubleshooting
+
+- If encountering memory issues during image processing, reduce batch size or image resolution
+- For model training errors, ensure the dataset structure matches expected format
+- When using transfer learning, verify pre-trained weights are properly loaded
 ---
 
 ## Introduction  
