@@ -2,13 +2,14 @@
 *A PTB‑XL case study*
 
 
+---
 # How to Use the Code
 
 This section guides you through the end-to-end process of running our ECG digitization and diagnosis pipeline. The workflow involves generating EKG images, cleaning them, extracting signals, and running machine learning models for diagnosis.
 
 ## Prerequisites
 
-- Python 3.8+
+- Python 3.8 - 3.10
 - Required packages (install via `pip install -r requirements.txt`)
 - PTB-XL dataset (see [dat/README.md](./dat/README.md) for dataset acquisition instructions)
 
@@ -22,8 +23,11 @@ git clone https://github.com/alphanumericslab/ecg-image-kit.git
 cd ecg-image-kit/codes/ecg-image-generator
 
 # Generate images from the PTB-XL dataset
+# IMPORTANT: Change the paths to match your local setup
 python generate_images.py --input_dir /path/to/ptb-xl --output_dir /path/to/output/images
 ```
+
+**Note:** You must modify the `--input_dir` and `--output_dir` paths to match your local file system structure. The input directory should point to where you've downloaded the PTB-XL dataset, and the output directory is where generated images will be saved.
 
 ## Step 2: Image Cleaning and Signal Reconstruction
 
@@ -37,6 +41,20 @@ The `signal_processing.ipynb` notebook guides you through:
 # Open the notebook
 jupyter notebook signal_processing.ipynb
 ```
+
+**Critical Path Configuration:**
+- At the beginning of the notebook, you'll need to update the following paths:
+  ```python
+  # Update these variables with your local paths
+  root_dir = "C:/Users/username/ekg/dat/data/06000"  # Path to original generated images
+  output_root = "C:/Users/username/ekg/dat/connected_binarized/100_06000"  # Path for cleaned images
+  ```
+
+**Important Directory Structure:**
+- It is **strongly recommended** to maintain the following structure:
+  - Store cleaned images in a directory named `dat/connected_binarized/`
+  - Split images into subdirectories by thousands (e.g., `100_06000` for images 6000-6999)
+  - This exact structure is needed for compatibility with the CNN model
 
 Follow the notebook instructions to process the images and extract clean signals. The notebook will save:
 - Cleaned images (without grid lines)
@@ -53,6 +71,14 @@ Use the reconstructed signal data to train and evaluate 1D models:
 jupyter notebook signal_ml.ipynb
 ```
 
+**Data Source Information:**
+- This model uses the **original signals** from the PTB-XL dataset (not the reconstructed signals)
+- The dataset acquisition details are provided in the `dat/README.md` file
+
+**Path Configuration:**
+- At the beginning of the notebook, update the relevant paths to your PTB-XL dataset location
+- Ensure you have downloaded the dataset according to instructions in the data README
+
 This notebook implements:
 - Feature engineering for Random Forest models
 - 1D ResNet architecture for raw signal classification
@@ -67,6 +93,14 @@ Use the cleaned ECG images to train and evaluate CNN models:
 # Run the CNN notebook
 jupyter notebook cnn.ipynb
 ```
+
+**Path Configuration:**
+- The CNN model expects cleaned images in the exact path structure mentioned earlier:
+  ```
+  dat/connected_binarized/100_XXXXX
+  ```
+  where XXXXX represents the thousands range (e.g., 06000)
+- It is critical to maintain this exact path structure for compatibility
 
 This notebook implements:
 - Basic CNN architecture
@@ -85,13 +119,24 @@ After running the models, refer to the "Results" and "Discussion" sections of th
 - Signal models: Trainable on CPU (Apple M1 or similar)
 - Image CNN models: 20-50 minutes per epoch on Apple M1
 
+## Configuration and Environment Variables
+
+Throughout the codebase, you'll need to adjust paths and configuration parameters:
+
+1. **Data Paths**: All notebooks contain sections at the top for configuring input/output paths
+2. **Model Parameters**: Hyperparameters can be adjusted based on your available hardware
+3. **Environment Variables**: Some scripts may read from environment variables - check the `.env.example` file if present
+
+**Important:** Always use absolute paths or properly configured relative paths to avoid file not found errors.
+
 ## Troubleshooting
 
 - If encountering memory issues during image processing, reduce batch size or image resolution
 - For model training errors, ensure the dataset structure matches expected format
 - When using transfer learning, verify pre-trained weights are properly loaded
----
+- Path-related errors are common - double-check all file paths in each notebook before running
 
+---
 ## Introduction  
 
 Heart disease remains the leading cause of death in the United States, yet millions of resting‑EKG records are still archived as static PDFs or paper printouts. These non‑interactive formats limit downstream analysis, large‑scale machine‑learning efforts, and seamless integration with electronic health records.�cite�turn0file1�ℹ
